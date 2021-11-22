@@ -66,19 +66,22 @@
   (ht-values (ht-get data "members")))
 
 (defun aoc-user-get-name (user)
+  "Return name of USER."
   (declare (side-effect-free t))
   (ht-get user "name"))
 
 (defun aoc-user-get-stars (user)
+  "Return stars amount of USER."
   (declare (side-effect-free t))
   (ht-get user "stars"))
 
 (defun aoc-user-get-local-score (user)
+  "Return local score of USER."
   (declare (side-effect-free t))
   (ht-get user "local_score"))
 
 
-(defun aoc-user-to-vector (user)
+(defun aoc-user->vector (user)
   "Convert USER from hash-table to vector."
   (vector (aoc-user-get-local-score user)
           (aoc-user-get-stars user)

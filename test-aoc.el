@@ -37,8 +37,8 @@
     (should (cl-every #'identity
                       (map 'list #'ht-equal? expected result)))))
 
-(ert-deftest test-aoc-user-to-vector ()
-  (should (equal (aoc-user-to-vector (ht ("name" "Creohex")
-                                         ("stars" 20)
-                                         ("local_score" 70)))
+(ert-deftest test-aoc-user->vector ()
+  (should (equal (aoc-user->vector (ht ("name" "Creohex")
+                                       ("stars" 20)
+                                       ("local_score" 70)))
                  [70 20 "Creohex"])))
