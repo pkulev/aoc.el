@@ -8,8 +8,6 @@
               (funcall #'pred
                        (funcall #'key a)
                        (funcall #'key b)))))
-                                   
-                                   
 
 
 (defvar test-aoc-private--mocked-data
@@ -42,3 +40,7 @@
                                        ("stars" 20)
                                        ("local_score" 70)))
                  [70 20 "Creohex"])))
+
+(ert-deftest test-aoc-task-gold? ()
+  (should ( (aoc-task-gold? (gt ("1" (ht ("get_star_ts" "1607422713"))
+                                 "2" (ht ("get_star_ts" "1607422750"))))))))

@@ -34,7 +34,7 @@
 
 ;;; Code:
 
-
+(require 'cl-lib)
 (require 'json)
 (require 'ht)
 
@@ -55,6 +55,9 @@
   :group 'aoc
   :type 'string)
 
+(defvar aoc--users (aoc--get-data)
+  "User data from JSON.")
+
 (defun aoc-private-get-url (year id)
   "Format private URL with YEAR and ID."
   (declare (side-effect-free t))
@@ -63,7 +66,24 @@
 (defun aoc-get-users (data)
   "Return table users from DATA."
   (declare (side-effect-free t))
-  (ht-values (ht-get data "members")))
+  (ht-get data "members"))
+
+(defun aoc-list-users (data)
+  "Return table users from DATA."
+  (declare (side-effect-free t))
+  (ht-values (aoc-get-users data)))
+
+(defun aoc-get-user (user-name)
+  "Return user data table by USER-NAME."
+  (declare (side-effect-free t))
+  (second (ht-find (lambda (id user) (string= (downcase (ht-get user "name"))
+                                              (downcase user-name)))
+                   (aoc-get-users aoc--users))))
+
+(defun aoc-user-get-id (user)
+  "Return ID of USER."
+  (declare (side-effect-free t))
+  (ht-get user "id"))
 
 (defun aoc-user-get-name (user)
   "Return name of USER."
@@ -80,6 +100,40 @@
   (declare (side-effect-free t))
   (ht-get user "local_score"))
 
+(defun aoc-user-get-global-score (user)
+  "Return global score of USER."
+  (declare (side-effect-free t))
+  (ht-get user "global_score"))
+
+(defun aoc-user-get-tasks (user)
+  "Return completion-day-level (tasks info) table of USER."
+  (declare (side-effect-free t))
+  (ht-get user "completion_day_level"))
+
+(defun aoc-user-list-tasks (user)
+  "Return list of USER tasks sorted by task number."
+  (declare (side-effect-free t))
+  (let ((tasks (ht->alist (aoc-user-get-tasks user))))
+    (cl-sort tasks 'string-lessp :key 'car)))
+
+(defun aoc-user-get-last-star-ts (user)
+  "Return last star timestamp table of USER."
+  (declare (side-effect-free t))
+  (ht-get user "last_star_ts"))
+
+(defun aoc-user--tasks-to-stars (user)
+  "Return stars string for USER tasks."
+  (declare (side-effect-free t))
+  (let* ((sorted-tasks (aoc-user-list-tasks user))
+         (tasks (aoc-user-get-tasks user))
+         (max-task-num (string-to-number (first (first (last sorted-tasks))))))
+    (cl-loop for num in (number-sequence 1 max-task-num)
+             collect (aoc--task-get-star-property
+                      (ht-get tasks (number-to-string num))))))
+
+(defun aoc-user--get-star-string (user)
+  (let ((stars (aoc-user--tasks-to-stars user)))
+    ))
 
 (defun aoc-user->vector (user)
   "Convert USER from hash-table to vector."
@@ -88,14 +142,30 @@
           (aoc-user-get-name user)))
 
 
+;; TODO: replace with getting new JSON via API
 (defun aoc--get-data ()
   (let ((json-object-type 'hash-table))
     (json-read-file "resp.json")))
 
+(defun aoc-task-gold? (task)
+  "Return whether both parts of TASK were solved."
+  (declare (side-effect-free t))
+  (and (ht-get task "1")
+       (ht-get task "2")))
 
-(let* ((id "64430")
-       (data (aoc--get-data)))
-  (dolist (user (aoc-get-users data))))
+(defun aoc-task-silver? (task)
+  "Return whether only first part of TASK was solved."
+  (declare (side-effect-free t))
+  (and (ht-get task "1")
+       (not (ht-get task "2"))))
+
+(defun aoc--task-propertize-star (task)
+  "Return propertized star for TASK, silver for 1, gold for 1 + 2."
+  (let ((property (list :foreground
+                        (cond ((aoc-task-silver? task) "silver")
+                              ((aoc-task-gold? task) "gold")
+                              (t "white"))))))
+  (propertize "✭" 'font-lock-face property))
 
 (defvar aoc-private--list-format [("Place" 5)
                                   ("Score" 5)
