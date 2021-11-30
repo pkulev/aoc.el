@@ -121,19 +121,20 @@
   (declare (side-effect-free t))
   (ht-get user "last_star_ts"))
 
-(defun aoc-user--tasks-to-stars (user)
+(defun aoc-user--tasks->stars (user)
   "Return stars string for USER tasks."
   (declare (side-effect-free t))
   (let* ((sorted-tasks (aoc-user-list-tasks user))
          (tasks (aoc-user-get-tasks user))
          (max-task-num (string-to-number (first (first (last sorted-tasks))))))
     (cl-loop for num in (number-sequence 1 max-task-num)
-             collect (aoc--task-get-star-property
+             collect (aoc--task-propertize-star
                       (ht-get tasks (number-to-string num))))))
 
 (defun aoc-user--get-star-string (user)
-  (let ((stars (aoc-user--tasks-to-stars user)))
-    ))
+  "Return propertized star string for USER."
+  (declare (side-effect-free t))
+  (apply 'concat (aoc-user--tasks->stars user)))
 
 (defun aoc-user->vector (user)
   "Convert USER from hash-table to vector."
@@ -164,29 +165,29 @@
   (let ((property (list :foreground
                         (cond ((aoc-task-silver? task) "silver")
                               ((aoc-task-gold? task) "gold")
-                              (t "white"))))))
-  (propertize "✭" 'font-lock-face property))
+                              (t "white")))))
+    (propertize "✭" 'font-lock-face property)))
 
 (defvar aoc-private--list-format [("Place" 5)
                                   ("Score" 5)
                                   ("Stars" 40)
                                   ("Name" 40)])
 
-(defvar aoc-private--rows '((nil ["1"
+(defvar aoc-private--rows `((nil ["1"
                                   "70"
-                                  "**********"
+                                  ,(aoc-user--get-star-string (aoc-get-user "Creohex"))
                                   "Creohex"])
                             (nil ["2"
                                   "28"
-                                  "******"
+                                  ,(aoc-user--get-star-string (aoc-get-user "Pavel Kulyov"))
                                   "Pavel Kulyov"])
                             (nil ["3"
                                   "18"
-                                  "*****"
+                                  ,(aoc-user--get-star-string (aoc-get-user "Alex Egorov"))
                                   "Alex Egorov"])
                             (nil ["4"
                                   "7"
-                                  "***."
+                                  ,(aoc-user--get-star-string (aoc-get-user "Имя Фамилия"))
                                   "Имя Фамилия"])))
 
 ;;;###autoload
