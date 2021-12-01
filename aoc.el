@@ -191,7 +191,9 @@ Use browser's devtools to get it from cookies."
                         (cond ((aoc-task-silver? task) "silver")
                               ((aoc-task-gold? task) "gold")
                               (t "white")))))
-    (propertize "✭" 'font-lock-face property)))
+    (propertize (if (char-displayable-p ?✭)"✭" "*")
+                'font-lock-face
+                property)))
 
 (defun aoc-private--get-rows ()
   "Return rows for tabulated list."
