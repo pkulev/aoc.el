@@ -74,6 +74,12 @@ Use browser's devtools to get it from cookies."
   :group 'aoc
   :type 'string)
 
+(defcustom aoc-ask-for-ids
+  t
+  "Whether to ask for session ID and leaderboard ID."
+  :group 'aoc
+  :type 'boolean)
+
 
 (defvar aoc-private--list-format [("Place" 5)
                                   ("Score" 5)
@@ -246,10 +252,20 @@ Use browser's devtools to get it from cookies."
   "Update private leaderboard tabulated list rows."
   (setq aoc-private--rows (aoc-private--get-rows)))
 
+(defun aoc--ask-user-board-ids ()
+  "Asks for input and sets session and leaderboard IDs."
+  (when aoc-ask-for-ids
+    (setq aoc-user-session-id
+          (read-string "Session ID: " aoc-user-session-id
+                       nil nil aoc-user-session-id))
+    (setq aoc-private-leaderboard-id
+          (read-string "Leaderboard ID: " aoc-private-leaderboard-id
+                       nil nil aoc-private-leaderboard-id))
+    nil))
 
 ;;;###autoload
 (defun aoc-private-list-board ()
-  (interactive)
+  (interactive (aoc--ask-user-board-ids))
   (switch-to-buffer "*Private leaderboard*")
   (aoc-private-board-mode))
 
