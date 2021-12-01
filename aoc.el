@@ -55,6 +55,16 @@
   :group 'aoc
   :type 'string)
 
+
+(defvar aoc-private--list-format [("Place" 5)
+                                  ("Score" 5)
+                                  ("Stars" 40)
+                                  ("Name" 40)]
+  "Tabulated list header.")
+
+(defvar aoc-private--rows nil
+  "Tabulated list contents.")
+
 (defvar aoc--users (aoc--get-data)
   "User data from JSON.")
 
@@ -128,7 +138,7 @@
   (declare (side-effect-free t))
   (let* ((sorted-tasks (aoc-user-list-tasks user))
          (tasks (aoc-user-get-tasks user))
-         (max-task-num (string-to-number (first (first (last sorted-tasks))))))
+         (max-task-num (string-to-number (or (first (first (last sorted-tasks))) "0"))))
     (cl-loop for num in (number-sequence 1 max-task-num)
              collect (aoc--task-propertize-star
                       (ht-get tasks (number-to-string num))))))
@@ -140,8 +150,8 @@
 
 (defun aoc-user->vector (user)
   "Convert USER from hash-table to vector."
-  (vector (aoc-user-get-local-score user)
-          (aoc-user-get-stars user)
+  (vector (number-to-string (or (aoc-user-get-local-score user) 0))
+          (aoc-user--get-star-string user)
           (aoc-user-get-name user)))
 
 
@@ -170,27 +180,17 @@
                               (t "white")))))
     (propertize "✭" 'font-lock-face property)))
 
-(defvar aoc-private--list-format [("Place" 5)
-                                  ("Score" 5)
-                                  ("Stars" 40)
-                                  ("Name" 40)])
+(defun aoc-private--get-rows ()
+  "Return rows for tabulated list."
+  (loop for user in (aoc-list-users aoc--users)
+      with idx = 1
+      collect (list nil (vconcat (vector (number-to-string idx)) (aoc-user->vector user)))
+      do (setq idx (1+ idx))))
 
-(defvar aoc-private--rows `((nil ["1"
-                                  "70"
-                                  ,(aoc-user--get-star-string (aoc-get-user "Creohex"))
-                                  "Creohex"])
-                            (nil ["2"
-                                  "28"
-                                  ,(aoc-user--get-star-string (aoc-get-user "Pavel Kulyov"))
-                                  "Pavel Kulyov"])
-                            (nil ["3"
-                                  "18"
-                                  ,(aoc-user--get-star-string (aoc-get-user "Alex Egorov"))
-                                  "Alex Egorov"])
-                            (nil ["4"
-                                  "7"
-                                  ,(aoc-user--get-star-string (aoc-get-user "Имя Фамилия"))
-                                  "Имя Фамилия"])))
+(defun aoc-private--update-rows ()
+  "Update private leaderboard tabulated list rows."
+  (setq aoc-private--rows (aoc-private--get-rows)))
+
 
 ;;;###autoload
 (defun aoc-private-list-board ()
@@ -204,7 +204,8 @@
   "Major mode key map.")
 
 (define-derived-mode aoc-private-board-mode tabulated-list-mode
-  "AoC private"
+  "AoC private leaderboard."
+  (aoc-private--update-rows)
   (let ((columns aoc-private--list-format)
         (rows aoc-private--rows))
     (setq tabulated-list-format columns)
@@ -212,8 +213,6 @@
     (tabulated-list-init-header)
     (tabulated-list-print)))
 
-
-(insert (propertize "test-thing" 'font-lock-face '(:foreground "red")))
 
 (provide 'aoc)
 
