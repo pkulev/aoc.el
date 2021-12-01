@@ -165,7 +165,7 @@ Use browser's devtools to get it from cookies."
   "Return list of USER tasks sorted by task number."
   (declare (side-effect-free t))
   (let ((tasks (ht->alist (aoc-user-get-tasks user))))
-    (cl-sort tasks 'string-lessp :key 'car)))
+    (cl-sort tasks 'string-lessp :key 'cl-first)))
 
 (defun aoc-user-get-last-star-ts (user)
   "Return last star timestamp table of USER."
@@ -177,7 +177,7 @@ Use browser's devtools to get it from cookies."
   (declare (side-effect-free t))
   (let* ((sorted-tasks (aoc-user-list-tasks user))
          (tasks (aoc-user-get-tasks user))
-         (max-task-num (string-to-number (or (first (first (last sorted-tasks))) "0"))))
+         (max-task-num (string-to-number (or (cl-first (cl-first (last sorted-tasks))) "0"))))
     (cl-loop for num in (number-sequence 1 max-task-num)
              collect (aoc--task-propertize-star
                       (ht-get tasks (number-to-string num))))))
