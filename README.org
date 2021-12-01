@@ -1,0 +1,38 @@
+#+TITLE: aoc.el -- Advent of Code private leaderboard client
+
+* Installation
+
+** Via =use-package=
+   #+begin_src elisp
+     (use-package aoc
+       :ensure nil
+       :quelpa
+       (aoc :repo "pkulev/aoc.el"
+            :fetcher github :upgrade t)
+       :custom
+       (aoc-private-leaderboard-id "<LEADERBOARD-ID>" "Get this from leaderboard URL.")
+       (aoc-user-session-id "<SESSION-ID>" "Get this from request cookies in browser."))
+   #+end_src
+
+* Customization
+  Customizable variables are subject for change so, *TODO TBA* here.
+
+  - =aoc-user-session-id= :: /Session ID./
+
+    Session ID that appears in cookies after authentication on https://adventofcode.com.
+
+  - =aoc-private-leaderboard-id= :: /ID for current leaderboard./
+
+    Multiple boards are planned too, but now only one is supported.
+
+  - =aoc-private-leaderboard-url= :: /Private leaderboard URL template./
+
+    You probably should not touch it.
+
+  - =aoc-private-leaderboard-year= :: /Year for leaderboard./
+
+    It's not ideal, tell me better way.
+
+  - =aoc-private-request-interval= :: /Request interval (author asks to keep 15min interval)./
+
+    Will be used for updates by timer and tracking manual updates (TODO caching).
