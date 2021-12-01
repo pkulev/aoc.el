@@ -61,6 +61,12 @@
   :group 'aoc
   :type 'string)
 
+(defcustom aoc-private-leaderboard-year
+  2021
+  "Private leaderboard year."
+  :group 'aoc
+  :type 'int)
+
 (defcustom aoc-user-session-id
   nil
   "AoC session ID.
@@ -78,13 +84,33 @@ Use browser's devtools to get it from cookies."
 (defvar aoc-private--rows nil
   "Tabulated list contents.")
 
-(defvar aoc--users (aoc--get-data)
-  "User data from JSON.")
+(defvar aoc-private--timer nil
+  "AoC private leaderboard update timer object.")
 
 (defun aoc-private-get-url (year id)
   "Format private URL with YEAR and ID."
   (declare (side-effect-free t))
   (format aoc-private-leaderboard-url year id))
+
+(defun aoc-private-get-url-current ()
+  "Format private URL with current YEAR and ID."
+  (declare (side-effect-free t))
+  (format aoc-private-leaderboard-url
+          aoc-private-leaderboard-year
+          aoc-private-leaderboard-id))
+
+(defun aoc-private--get-curl-command ()
+  (format "curl -s --cookie 'session=%s' '%s'"
+          aoc-user-session-id
+          (aoc-private-get-url-current)))
+
+(defun aoc-private-get-data ()
+  (let ((json-object-type 'hash-table)
+        (raw (shell-command-to-string (aoc-private--get-curl-command))))
+    (json-read-from-string raw)))
+
+(defvar aoc--users (aoc-private-get-data)
+  "User data from JSON.")
 
 (defun aoc-get-users (data)
   "Return table users from DATA."
@@ -167,11 +193,6 @@ Use browser's devtools to get it from cookies."
           (aoc-user--get-star-string user)
           (aoc-user-get-name user)))
 
-
-;; TODO: replace with getting new JSON via API
-(defun aoc--get-data ()
-  (let ((json-object-type 'hash-table))
-    (json-read-file "2021.json")))
 
 (defun aoc-task-gold? (task)
   "Return whether both parts of TASK were solved."
