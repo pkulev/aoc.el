@@ -212,7 +212,7 @@ Use browser's devtools to get it from cookies."
                         (cond ((aoc-task-silver? task) "silver")
                               ((aoc-task-gold? task) "gold")
                               (t (face-attribute 'shadow :foreground))))))
-    (propertize (if (char-displayable-p ?✭)"✭" "*")
+    (propertize (if (char-displayable-p ?★)"★" "*")
                 'font-lock-face
                 property)))
 
