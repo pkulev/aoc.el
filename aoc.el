@@ -69,9 +69,11 @@
   (ht-get data "members"))
 
 (defun aoc-list-users (data)
-  "Return table users from DATA."
+  "Return table users from DATA sorted descending by score."
   (declare (side-effect-free t))
-  (ht-values (aoc-get-users data)))
+  (cl-sort (ht-values (aoc-get-users data))
+           '>
+           :key 'aoc-user-get-local-score))
 
 (defun aoc-get-user (user-name)
   "Return user data table by USER-NAME."
