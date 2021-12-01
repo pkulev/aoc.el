@@ -109,7 +109,7 @@ Use browser's devtools to get it from cookies."
         (raw (shell-command-to-string (aoc-private--get-curl-command))))
     (json-read-from-string raw)))
 
-(defvar aoc--users (aoc-private-get-data)
+(defvar aoc--users nil
   "User data from JSON.")
 
 (defun aoc-get-users (data)
@@ -241,6 +241,7 @@ Use browser's devtools to get it from cookies."
 
 (define-derived-mode aoc-private-board-mode tabulated-list-mode
   "AoC private leaderboard."
+  (setq aoc--users (aoc-private-get-data))
   (aoc-private--update-rows)
   (let ((columns aoc-private--list-format)
         (rows aoc-private--rows))
