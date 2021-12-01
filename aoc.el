@@ -218,7 +218,7 @@ Use browser's devtools to get it from cookies."
 
 (defun aoc-private--get-rows ()
   "Return rows for tabulated list."
-  (loop for user in (aoc-list-users aoc--users)
+  (cl-loop for user in (aoc-list-users aoc--users)
       with idx = 1
       collect (list nil (vconcat (vector (number-to-string idx)) (aoc-user->vector user)))
       do (setq idx (1+ idx))))
