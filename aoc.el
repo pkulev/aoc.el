@@ -211,7 +211,7 @@ Use browser's devtools to get it from cookies."
   (let ((property (list :foreground
                         (cond ((aoc-task-silver? task) "silver")
                               ((aoc-task-gold? task) "gold")
-                              (t "white")))))
+                              (t (face-attribute 'shadow :foreground))))))
     (propertize (if (char-displayable-p ?✭)"✭" "*")
                 'font-lock-face
                 property)))
