@@ -1,13 +1,13 @@
-;;; aoc.el --- Advent of Code leaderboard viewer for Emacs.
+;;; aoc.el --- Advent of Code leaderboard viewer
 
 ;; Copyright (C) 2021 Pavel Kulyov
 
 ;; Author: Pavel Kulyov <kulyov.pavel@gmail.com>
 ;; Maintainer: Pavel Kulyov <kulyov.pavel@gmail.com>
 ;; Version: 0.1.0
-;; Keywords: convinience
+;; Keywords: convenience
 ;; URL: https://www.github.com/pkulev/aoc.el.git
-;; Package-Requires: (json ht)
+;; Package-Requires: ((emacs "24.3") (json "1.4") (ht "2.4"))
 
 ;; This file is NOT part of GNU/Emacs.
 
@@ -137,9 +137,9 @@ Use browser's devtools to get it from cookies."
 (defun aoc-get-user (user-name)
   "Return user data table by USER-NAME."
   (declare (side-effect-free t))
-  (second (ht-find (lambda (id user) (string= (downcase (ht-get user "name"))
-                                              (downcase user-name)))
-                   (aoc-get-users aoc--users))))
+  (cl-second (ht-find (lambda (id user) (string= (downcase (ht-get user "name"))
+                                                 (downcase user-name)))
+                      (aoc-get-users aoc--users))))
 
 (defun aoc-user-get-id (user)
   "Return ID of USER."
