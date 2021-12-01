@@ -55,6 +55,19 @@
   :group 'aoc
   :type 'string)
 
+(defcustom aoc-private-leaderboard-id
+  nil
+  "Private leaderboard ID."
+  :group 'aoc
+  :type 'string)
+
+(defcustom aoc-user-session-id
+  nil
+  "AoC session ID.
+Use browser's devtools to get it from cookies."
+  :group 'aoc
+  :type 'string)
+
 
 (defvar aoc-private--list-format [("Place" 5)
                                   ("Score" 5)
