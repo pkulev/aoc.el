@@ -158,7 +158,7 @@
 ;; TODO: replace with getting new JSON via API
 (defun aoc--get-data ()
   (let ((json-object-type 'hash-table))
-    (json-read-file "resp.json")))
+    (json-read-file "2021.json")))
 
 (defun aoc-task-gold? (task)
   "Return whether both parts of TASK were solved."

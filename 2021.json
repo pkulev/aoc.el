@@ -1,0 +1,105 @@
+{
+    "members": {
+        "819754": {
+            "stars": 0,
+            "name": "Pavel Kulyov",
+            "id": "819754",
+            "local_score": 0,
+            "global_score": 0,
+            "completion_day_level": {},
+            "last_star_ts": "0"
+        },
+        "1551212": {
+            "local_score": 0,
+            "global_score": 0,
+            "stars": 0,
+            "id": "1551212",
+            "name": "letBulochkin",
+            "last_star_ts": "0",
+            "completion_day_level": {}
+        },
+        "1292170": {
+            "name": "\u041d\u043e\u043c\u043c\u0438",
+            "stars": 0,
+            "id": "1292170",
+            "local_score": 0,
+            "global_score": 0,
+            "completion_day_level": {},
+            "last_star_ts": "0"
+        },
+        "1274666": {
+            "global_score": 0,
+            "local_score": 16,
+            "stars": 2,
+            "id": "1274666",
+            "name": "Andrey Orst",
+            "last_star_ts": 1638340633,
+            "completion_day_level": {
+                "1": {
+                    "1": {
+                        "get_star_ts": 1638340322
+                    },
+                    "2": {
+                        "get_star_ts": 1638340633
+                    }
+                }
+            }
+        },
+        "64430": {
+            "name": "Creohex",
+            "stars": 0,
+            "id": "64430",
+            "global_score": 0,
+            "local_score": 0,
+            "last_star_ts": "0",
+            "completion_day_level": {}
+        },
+        "1295729": {
+            "completion_day_level": {},
+            "last_star_ts": "0",
+            "name": "flameshikari",
+            "stars": 0,
+            "id": "1295729",
+            "global_score": 0,
+            "local_score": 0
+        },
+        "1224476": {
+            "last_star_ts": "0",
+            "completion_day_level": {},
+            "global_score": 0,
+            "local_score": 0,
+            "stars": 0,
+            "id": "1224476",
+            "name": "Alex Egorov"
+        },
+        "1546611": {
+            "last_star_ts": "0",
+            "completion_day_level": {},
+            "stars": 0,
+            "id": "1546611",
+            "name": "foorkis",
+            "local_score": 0,
+            "global_score": 0
+        },
+        "1553728": {
+            "last_star_ts": 1638338951,
+            "completion_day_level": {
+                "1": {
+                    "1": {
+                        "get_star_ts": 1638335783
+                    },
+                    "2": {
+                        "get_star_ts": 1638338951
+                    }
+                }
+            },
+            "global_score": 0,
+            "local_score": 18,
+            "stars": 2,
+            "id": "1553728",
+            "name": "L\u00e4mppi L\u00fctti"
+        }
+    },
+    "owner_id": "1224476",
+    "event": "2021"
+}
