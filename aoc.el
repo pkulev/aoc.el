@@ -7,7 +7,7 @@
 ;; Version: 0.1.0
 ;; Keywords: convenience
 ;; URL: https://www.github.com/pkulev/aoc.el.git
-;; Package-Requires: ((emacs "24.3") (json "1.4") (ht "2.4"))
+;; Package-Requires: ((emacs "25.1") (json "1.4") (ht "2.4"))
 
 ;; This file is NOT part of GNU/Emacs.
 
@@ -98,10 +98,8 @@ Use browser's devtools to get it from cookies."
 
 (defun aoc--today ()
   "Return today date in form of (day month year)."
-  (let ((today (decode-time (current-time))))
-    (list (decoded-time-day today)
-          (decoded-time-month today)
-          (decoded-time-year today))))
+  (seq-let (_ _ _ d m y) (decode-time (current-time))
+    (list d m y)))
 
 (defun aoc-private-get-url (year id)
   "Format private URL with YEAR and ID."
@@ -212,7 +210,7 @@ Use browser's devtools to get it from cookies."
 ;; TODO: what year? Hardcoded? Choosed from table?
 (defun aoc-task-current-max ()
   "Return max available tasks for the year."
-  (seq-let (day month year) (today)
+  (seq-let (day month year) (aoc--today)
     (cond ((and (= month 12)
                 (= year aoc-private-leaderboard-year))
            day)
