@@ -1,13 +1,13 @@
-;;; aoc.el --- Advent of Code leaderboard viewer for Emacs.
+;;; aoc.el --- Advent of Code leaderboard viewer
 
 ;; Copyright (C) 2021 Pavel Kulyov
 
 ;; Author: Pavel Kulyov <kulyov.pavel@gmail.com>
 ;; Maintainer: Pavel Kulyov <kulyov.pavel@gmail.com>
 ;; Version: 0.1.0
-;; Keywords: convinience
+;; Keywords: convenience
 ;; URL: https://www.github.com/pkulev/aoc.el.git
-;; Package-Requires: (json ht)
+;; Package-Requires: ((emacs "25.1") (json "1.4") (ht "2.4"))
 
 ;; This file is NOT part of GNU/Emacs.
 
@@ -74,6 +74,12 @@ Use browser's devtools to get it from cookies."
   :group 'aoc
   :type 'string)
 
+(defcustom aoc-ask-for-ids
+  t
+  "Whether to ask for session ID and leaderboard ID."
+  :group 'aoc
+  :type 'boolean)
+
 
 (defvar aoc-private--list-format [("Place" 5)
                                   ("Score" 5)
@@ -92,10 +98,8 @@ Use browser's devtools to get it from cookies."
 
 (defun aoc--today ()
   "Return today date in form of (day month year)."
-  (let ((today (decode-time (current-time))))
-    (list (decoded-time-day today)
-          (decoded-time-month today)
-          (decoded-time-year today))))
+  (seq-let (_ _ _ d m y) (decode-time (current-time))
+    (list d m y)))
 
 (defun aoc-private-get-url (year id)
   "Format private URL with YEAR and ID."
@@ -137,9 +141,9 @@ Use browser's devtools to get it from cookies."
 (defun aoc-get-user (user-name)
   "Return user data table by USER-NAME."
   (declare (side-effect-free t))
-  (second (ht-find (lambda (id user) (string= (downcase (ht-get user "name"))
-                                              (downcase user-name)))
-                   (aoc-get-users aoc--users))))
+  (cl-second (ht-find (lambda (id user) (string= (downcase (ht-get user "name"))
+                                                 (downcase user-name)))
+                      (aoc-get-users aoc--users))))
 
 (defun aoc-user-get-id (user)
   "Return ID of USER."
@@ -206,7 +210,7 @@ Use browser's devtools to get it from cookies."
 ;; TODO: what year? Hardcoded? Choosed from table?
 (defun aoc-task-current-max ()
   "Return max available tasks for the year."
-  (seq-let (day month year) (today)
+  (seq-let (day month year) (aoc--today)
     (cond ((and (= month 12)
                 (= year aoc-private-leaderboard-year))
            day)
@@ -246,10 +250,20 @@ Use browser's devtools to get it from cookies."
   "Update private leaderboard tabulated list rows."
   (setq aoc-private--rows (aoc-private--get-rows)))
 
+(defun aoc--ask-user-board-ids ()
+  "Asks for input and sets session and leaderboard IDs."
+  (when aoc-ask-for-ids
+    (setq aoc-user-session-id
+          (read-string "Session ID: " aoc-user-session-id
+                       nil nil aoc-user-session-id))
+    (setq aoc-private-leaderboard-id
+          (read-string "Leaderboard ID: " aoc-private-leaderboard-id
+                       nil nil aoc-private-leaderboard-id))
+    nil))
 
 ;;;###autoload
 (defun aoc-private-list-board ()
-  (interactive)
+  (interactive (aoc--ask-user-board-ids))
   (switch-to-buffer "*Private leaderboard*")
   (aoc-private-board-mode))
 
