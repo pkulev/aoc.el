@@ -87,6 +87,16 @@ Use browser's devtools to get it from cookies."
 (defvar aoc-private--timer nil
   "AoC private leaderboard update timer object.")
 
+(defvar aoc-task-max 25
+  "Number of tasks, hope it won't change.")
+
+(defun aoc--today ()
+  "Return today date in form of (day month year)."
+  (let ((today (decode-time (current-time))))
+    (list (decoded-time-day today)
+          (decoded-time-month today)
+          (decoded-time-year today))))
+
 (defun aoc-private-get-url (year id)
   "Format private URL with YEAR and ID."
   (declare (side-effect-free t))
@@ -177,10 +187,10 @@ Use browser's devtools to get it from cookies."
   (declare (side-effect-free t))
   (let* ((sorted-tasks (aoc-user-list-tasks user))
          (tasks (aoc-user-get-tasks user))
-         (max-task-num (string-to-number (or (cl-first (cl-first (last sorted-tasks))) "0"))))
+         (max-task-num (aoc-task-current-max)))
     (cl-loop for num in (number-sequence 1 max-task-num)
              collect (aoc--task-propertize-star
-                      (ht-get tasks (number-to-string num))))))
+                      (ht-get tasks (number-to-string num) (ht))))))
 
 (defun aoc-user--get-star-string (user)
   "Return propertized star string for USER."
@@ -193,6 +203,15 @@ Use browser's devtools to get it from cookies."
           (aoc-user--get-star-string user)
           (aoc-user-get-name user)))
 
+;; TODO: what year? Hardcoded? Choosed from table?
+(defun aoc-task-current-max ()
+  "Return max available tasks for the year."
+  (seq-let (day month year) (today)
+    (cond ((and (= month 12)
+                (= year aoc-private-leaderboard-year))
+           day)
+          ((< aoc-private-leaderboard-year year)
+           aoc-task-max))))
 
 (defun aoc-task-gold? (task)
   "Return whether both parts of TASK were solved."
@@ -240,7 +259,7 @@ Use browser's devtools to get it from cookies."
   "Major mode key map.")
 
 (define-derived-mode aoc-private-board-mode tabulated-list-mode
-  "AoC private leaderboard."
+  "aoc:pb"
   (setq aoc--users (aoc-private-get-data))
   (aoc-private--update-rows)
   (let ((columns aoc-private--list-format)
