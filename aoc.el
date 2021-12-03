@@ -1,4 +1,4 @@
-;;; aoc.el --- Advent of Code leaderboard viewer
+;;; aoc.el --- Advent of Code leaderboard viewer for Emacs. -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2021 Pavel Kulyov
 
@@ -246,12 +246,14 @@ Use browser's devtools to get it from cookies."
       collect (list nil (vconcat (vector (number-to-string idx)) (aoc-user->vector user)))
       do (setq idx (1+ idx))))
 
-(defun aoc-private--update-rows ()
-  "Update private leaderboard tabulated list rows."
-  (setq aoc-private--rows (aoc-private--get-rows)))
+(defun aoc-private--refresh ()
+  "Refresh data and recompute table contents."
+  (setq aoc--users (aoc-private-get-data)
+        tabulated-list-format aoc-private--list-format
+        tabulated-list-entries (aoc-private--get-rows)))
 
 (defun aoc--ask-user-board-ids ()
-  "Asks for input and sets session and leaderboard IDs."
+  "Ask for input and set session and leaderboard IDs."
   (when aoc-ask-for-ids
     (setq aoc-user-session-id
           (read-string "Session ID: " aoc-user-session-id
@@ -263,25 +265,22 @@ Use browser's devtools to get it from cookies."
 
 ;;;###autoload
 (defun aoc-private-list-board ()
+  "Show AoC private board."
   (interactive (aoc--ask-user-board-ids))
   (switch-to-buffer "*Private leaderboard*")
   (aoc-private-board-mode))
 
-(defvar aoc-mode-map
+(defvar aoc-private-board-mode-map
   (let ((map (make-sparse-keymap)))
     map)
   "Major mode key map.")
 
 (define-derived-mode aoc-private-board-mode tabulated-list-mode
   "aoc:pb"
-  (setq aoc--users (aoc-private-get-data))
-  (aoc-private--update-rows)
-  (let ((columns aoc-private--list-format)
-        (rows aoc-private--rows))
-    (setq tabulated-list-format columns)
-    (setq tabulated-list-entries rows)
-    (tabulated-list-init-header)
-    (tabulated-list-print)))
+  (add-hook 'tabulated-list-revert-hook 'aoc-private--refresh)
+  (aoc-private--refresh)
+  (tabulated-list-init-header)
+  (tabulated-list-print))
 
 
 (provide 'aoc)
