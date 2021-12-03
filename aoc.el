@@ -78,7 +78,7 @@ Use browser's devtools to get it from cookies."
   :group 'aoc
   :type 'boolean)
 
-(defvar aoc-private--buffer-name "aoc::pb::%s"
+(defvar aoc-private--buffer-name "*aoc::pb::%s*"
   "Private leaderboard buffer name template.")
 
 (defvar aoc-private--list-format [("Place" 5)
