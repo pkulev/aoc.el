@@ -4,7 +4,7 @@
 
 ;; Author: Pavel Kulyov <kulyov.pavel@gmail.com>
 ;; Maintainer: Pavel Kulyov <kulyov.pavel@gmail.com>
-;; Version: 0.1.0
+;; Version: 0.2.0
 ;; Keywords: convenience
 ;; URL: https://www.github.com/pkulev/aoc.el.git
 ;; Package-Requires: ((emacs "25.1") (json "1.4") (ht "2.4"))
