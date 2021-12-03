@@ -1,5 +1,8 @@
 #+TITLE: aoc.el -- Advent of Code private leaderboard client
 
+[[2021][file:https://github.com/pkulev/aoc.el/blob/main/images/screenshot1.png]]
+[[2020][file:https://github.com/pkulev/aoc.el/blob/main/images/screenshot2.png]]
+
 * Installation
 
 ** Via =use-package=
@@ -10,9 +13,21 @@
        (aoc :repo "pkulev/aoc.el"
             :fetcher github :upgrade t)
        :custom
+       (aoc-ask-for-ids nil "Use IDs that this config sets.")
        (aoc-private-leaderboard-id "<LEADERBOARD-ID>" "Get this from leaderboard URL.")
        (aoc-user-session-id "<SESSION-ID>" "Get this from request cookies in browser."))
    #+end_src
+
+* Keys in private leaderboard table
+
+  |-----+-----------------------------------|
+  | Key | Description                       |
+  |-----+-----------------------------------|
+  | g   | Refresh this table.               |
+  | f   | Show table for the next year.     |
+  | b   | Show table for the previous year. |
+  | q   | Bury table buffer.                |
+  |-----+-----------------------------------|
 
 * Customization
   Customizable variables are subject for change so, *TODO TBA* here.
@@ -31,8 +46,10 @@
 
   - =aoc-private-leaderboard-year= :: /Year for leaderboard./
 
-    It's not ideal, tell me better way.
+    Local buffer variable. Default value is current year.
 
   - =aoc-private-request-interval= :: /Request interval (author asks to keep 15min interval)./
 
     Will be used for updates by timer and tracking manual updates (TODO caching).
+
+  - =aoc-ask-for-ids= :: /Whether to ask for session ID and leaderboard ID./
