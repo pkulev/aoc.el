@@ -244,9 +244,9 @@ Use browser's devtools to get it from cookies."
 (defun aoc--task-propertize-star (task)
   "Return propertized star for TASK, silver for 1, gold for 1 + 2."
   (let ((property (list :foreground
-                        (cond ((aoc-task-silver? task) "silver")
+                        (cond ((aoc-task-silver? task) "Light steel blue")
                               ((aoc-task-gold? task) "gold")
-                              (t (face-attribute 'shadow :foreground))))))
+                              (t "dim grey")))))
     (propertize "*" 'font-lock-face property)))
 
 (defun aoc-private--get-rows ()
@@ -315,7 +315,6 @@ Use browser's devtools to get it from cookies."
   (aoc-private--refresh)
   (tabulated-list-init-header)
   (tabulated-list-print))
-
 
 (provide 'aoc)
 
