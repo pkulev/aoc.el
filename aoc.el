@@ -63,14 +63,6 @@
   :safe t
   :type 'string)
 
-(defcustom aoc-private-leaderboard-year
-  2021
-  "Private leaderboard year."
-  :group 'aoc
-  :local t
-  :safe t
-  :type 'int)
-
 (defcustom aoc-user-session-id
   nil
   "AoC session ID.
@@ -108,6 +100,14 @@ Use browser's devtools to get it from cookies."
   "Return today date in form of (day month year)."
   (seq-let (_ _ _ d m y) (decode-time (current-time))
     (list d m y)))
+
+(defcustom aoc-private-leaderboard-year
+  (cl-third (aoc--today))
+  "Private leaderboard year."
+  :group 'aoc
+  :local t
+  :safe t
+  :type 'int)
 
 (defun aoc-private-get-url (year id)
   "Format private URL with YEAR and ID."
