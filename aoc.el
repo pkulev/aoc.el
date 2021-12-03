@@ -83,7 +83,7 @@ Use browser's devtools to get it from cookies."
 
 (defvar aoc-private--list-format [("Place" 5)
                                   ("Score" 5)
-                                  ("Stars" 40)
+                                  ("Stars" 25)
                                   ("Name" 40)]
   "Tabulated list header.")
 
@@ -235,16 +235,18 @@ Use browser's devtools to get it from cookies."
                         (cond ((aoc-task-silver? task) "silver")
                               ((aoc-task-gold? task) "gold")
                               (t (face-attribute 'shadow :foreground))))))
-    (propertize (if (char-displayable-p ?★)"★" "*")
-                'font-lock-face
-                property)))
+    (propertize "*" 'font-lock-face property)))
 
 (defun aoc-private--get-rows ()
   "Return rows for tabulated list."
-  (cl-loop for user in (aoc-list-users aoc--users)
-      with idx = 1
-      collect (list nil (vconcat (vector (number-to-string idx)) (aoc-user->vector user)))
-      do (setq idx (1+ idx))))
+  (append '((nil ["" "" "         1111111111222222" ""])
+            (nil ["" "" "1234567890123456789012345" ""]))
+          (cl-loop for user in (aoc-list-users aoc--users)
+                   with idx = 1
+                   collect (list nil
+                                 (vconcat (vector (number-to-string idx))
+                                          (aoc-user->vector user)))
+                   do (setq idx (1+ idx)))))
 
 (defun aoc-private--refresh ()
   "Refresh data and recompute table contents."
