@@ -59,12 +59,16 @@
   nil
   "Private leaderboard ID."
   :group 'aoc
+  :local t
+  :safe t
   :type 'string)
 
 (defcustom aoc-private-leaderboard-year
   2021
   "Private leaderboard year."
   :group 'aoc
+  :local t
+  :safe t
   :type 'int)
 
 (defcustom aoc-user-session-id
@@ -72,6 +76,8 @@
   "AoC session ID.
 Use browser's devtools to get it from cookies."
   :group 'aoc
+  :local t
+  :safe t
   :type 'string)
 
 (defcustom aoc-ask-for-ids
@@ -80,6 +86,8 @@ Use browser's devtools to get it from cookies."
   :group 'aoc
   :type 'boolean)
 
+(defvar aoc-private--buffer-name "aoc::pb::%s"
+  "Private leaderboard buffer name template.")
 
 (defvar aoc-private--list-format [("Place" 5)
                                   ("Score" 5)
@@ -122,6 +130,10 @@ Use browser's devtools to get it from cookies."
   (let ((json-object-type 'hash-table)
         (raw (shell-command-to-string (aoc-private--get-curl-command))))
     (json-read-from-string raw)))
+
+(defun aoc-private-get-buffer-name (year)
+  "Return private leaderboard buffer name for the provided YEAR."
+  (format aoc-private--buffer-name year))
 
 (defvar aoc--users nil
   "User data from JSON.")
@@ -265,15 +277,35 @@ Use browser's devtools to get it from cookies."
                        nil nil aoc-private-leaderboard-id))
     nil))
 
+(defun aoc-private-board-next-year ()
+  "Switch current board to the next year."
+  (interactive)
+  (let ((year (1+ aoc-private-leaderboard-year)))
+    (when (> year 2021) (error "No future"))
+    (setq aoc-private-leaderboard-year year)
+    (rename-buffer (aoc-private-get-buffer-name year))
+    (revert-buffer)))
+
+(defun aoc-private-board-prev-year ()
+  "Switch current board to the previous year."
+  (interactive)
+  (let ((year (1- aoc-private-leaderboard-year)))
+    (when (< year 2015) (error "No time travel"))
+    (setq aoc-private-leaderboard-year year)
+    (rename-buffer (aoc-private-get-buffer-name year))
+    (revert-buffer)))
+
 ;;;###autoload
 (defun aoc-private-list-board ()
   "Show AoC private board."
   (interactive (aoc--ask-user-board-ids))
-  (switch-to-buffer "*Private leaderboard*")
+  (switch-to-buffer (aoc-private-get-buffer-name aoc-private-leaderboard-year))
   (aoc-private-board-mode))
 
 (defvar aoc-private-board-mode-map
   (let ((map (make-sparse-keymap)))
+    (define-key map "b" 'aoc-private-board-prev-year)
+    (define-key map "f" 'aoc-private-board-next-year)
     map)
   "Major mode key map.")
 
