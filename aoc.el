@@ -1,10 +1,10 @@
-;;; aoc.el --- Advent of Code leaderboard viewer for Emacs. -*- lexical-binding: t; -*-
+;;; aoc.el --- Advent of Code leaderboard viewer -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2021 Pavel Kulyov
 
 ;; Author: Pavel Kulyov <kulyov.pavel@gmail.com>
 ;; Maintainer: Pavel Kulyov <kulyov.pavel@gmail.com>
-;; Version: 0.2.0
+;; Version: 0.3.0
 ;; Keywords: convenience
 ;; URL: https://www.github.com/pkulev/aoc.el.git
 ;; Package-Requires: ((emacs "25.1") (json "1.4") (ht "2.4"))
@@ -55,13 +55,16 @@
   :group 'aoc
   :type 'string)
 
-(defcustom aoc-private-leaderboard-id
+(defcustom aoc-private-leaderboard-ids
   nil
-  "Private leaderboard ID."
+  "Private leaderboard IDs."
   :group 'aoc
-  :local t
   :safe t
-  :type 'string)
+  :type '(repeat string))
+
+(defvar aoc--private-leaderboard-id nil
+  "Private leaderboard ID.")
+
 
 (defcustom aoc-user-session-id
   nil
@@ -71,12 +74,6 @@ Use browser's devtools to get it from cookies."
   :local t
   :safe t
   :type 'string)
-
-(defcustom aoc-ask-for-ids
-  t
-  "Whether to ask for session ID and leaderboard ID."
-  :group 'aoc
-  :type 'boolean)
 
 (defvar aoc-private--buffer-name "*aoc::pb::%s*"
   "Private leaderboard buffer name template.")
@@ -119,7 +116,7 @@ Use browser's devtools to get it from cookies."
   (declare (side-effect-free t))
   (format aoc-private-leaderboard-url
           aoc-private-leaderboard-year
-          aoc-private-leaderboard-id))
+          aoc--private-leaderboard-id))
 
 (defun aoc-private--get-curl-command ()
   (format "curl -s --cookie 'session=%s' '%s'"
@@ -269,13 +266,10 @@ Use browser's devtools to get it from cookies."
 (defun aoc--ask-user-board-ids ()
   "Ask for input and set session and leaderboard IDs."
   (when aoc-ask-for-ids
-    (setq aoc-user-session-id
-          (read-string "Session ID: " aoc-user-session-id
-                       nil nil aoc-user-session-id))
-    (setq aoc-private-leaderboard-id
-          (read-string "Leaderboard ID: " aoc-private-leaderboard-id
-                       nil nil aoc-private-leaderboard-id))
-    nil))
+    (let ((session-id (read-string "Session ID: " aoc-user-session-id
+                                   nil nil aoc-user-session-id))
+          (leaderboard-id ))
+      (list session-id leaderboard-id))))
 
 (defun aoc-private-board-next-year ()
   "Switch current board to the next year."
@@ -298,8 +292,9 @@ Use browser's devtools to get it from cookies."
 ;;;###autoload
 (defun aoc-private-list-board ()
   "Show AoC private board."
-  (interactive (aoc--ask-user-board-ids))
-  (switch-to-buffer (aoc-private-get-buffer-name aoc-private-leaderboard-year))
+  (interactive)
+  (pop-to-buffer (get-buffer-create (aoc-private-get-buffer-name
+                                     aoc-private-leaderboard-year)))
   (aoc-private-board-mode))
 
 (defvar aoc-private-board-mode-map
@@ -311,7 +306,10 @@ Use browser's devtools to get it from cookies."
 
 (define-derived-mode aoc-private-board-mode tabulated-list-mode
   "aoc:pb"
+  (make-variable-buffer-local 'aoc--private-leaderboard-id)
   (add-hook 'tabulated-list-revert-hook 'aoc-private--refresh)
+  (setq aoc--private-leaderboard-id
+        (completing-read "Leaderboard ID: " aoc-private-leaderboard-ids))
   (aoc-private--refresh)
   (tabulated-list-init-header)
   (tabulated-list-print))

@@ -13,8 +13,7 @@
        (aoc :repo "pkulev/aoc.el"
             :fetcher github :upgrade t)
        :custom
-       (aoc-ask-for-ids nil "Use IDs that this config sets.")
-       (aoc-private-leaderboard-id "<LEADERBOARD-ID>" "Get this from leaderboard URL.")
+       (aoc-private-leaderboard-ids '("<LEADERBOARD-ID>") "Get this from leaderboard URL.")
        (aoc-user-session-id "<SESSION-ID>" "Get this from request cookies in browser."))
    #+end_src
 
@@ -36,9 +35,9 @@
 
     Session ID that appears in cookies after authentication on https://adventofcode.com.
 
-  - =aoc-private-leaderboard-id= :: /ID for current leaderboard./
+  - =aoc-private-leaderboard-ids= :: /List of IDs for leaderboards./
 
-    Multiple boards are planned too, but now only one is supported.
+    List of Leaderboard IDs to choose from when activating the mode.
 
   - =aoc-private-leaderboard-url= :: /Private leaderboard URL template./
 
@@ -51,5 +50,3 @@
   - =aoc-private-request-interval= :: /Request interval (author asks to keep 15min interval)./
 
     Will be used for updates by timer and tracking manual updates (TODO caching).
-
-  - =aoc-ask-for-ids= :: /Whether to ask for session ID and leaderboard ID./
