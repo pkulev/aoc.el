@@ -62,7 +62,7 @@
   :safe t
   :type '(repeat string))
 
-(defvar-local aoc--private-leaderboard-id nil
+(defvar-local aoc-private--leaderboard-id nil
   "Private leaderboard ID.")
 
 (defcustom aoc-user-session-id
@@ -115,7 +115,7 @@ Use browser's devtools to get it from cookies."
   (declare (side-effect-free t))
   (format aoc-private-leaderboard-url
           aoc-private-leaderboard-year
-          aoc--private-leaderboard-id))
+          aoc-private--leaderboard-id))
 
 (defun aoc-private--get-curl-command ()
   (format "curl -s --cookie 'session=%s' '%s'"
@@ -284,10 +284,10 @@ Use browser's devtools to get it from cookies."
   "Show AoC private board."
   (interactive)
   (let ((buffer (get-buffer-create (aoc-private-get-buffer-name
-                                    (aoc--last-event-year)))))
+                                    aoc-private-leaderboard-year))))
     (with-current-buffer buffer
       (aoc-private-board-mode)
-      (setq aoc--private-leaderboard-id
+      (setq aoc-private--leaderboard-id
             (completing-read "Leaderboard ID: " aoc-private-leaderboard-ids))
       (aoc-private--refresh)
       (tabulated-list-print))
