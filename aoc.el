@@ -97,13 +97,25 @@ Use browser's devtools to get it from cookies."
   (seq-let (_ _ _ d m y) (decode-time (current-time))
     (list d m y)))
 
+(defun aoc--last-event-year ()
+  "Return the year of the last active event.
+
+This includes current year if it's already a December."
+  (seq-let (_ month year) (aoc--today)
+    (if (= month 12)
+        year
+      (1- year))))
+
 (defcustom aoc-private-leaderboard-year
-  (cl-third (aoc--today))
-  "Private leaderboard year."
+  (aoc--last-event-year)
+  "Private leaderboard year.
+
+Automatically set to the year of the last active event on
+initialization."
   :group 'aoc
   :local t
   :safe t
-  :type 'int)
+  :type 'integer)
 
 (defun aoc-private-get-url (year id)
   "Format private URL with YEAR and ID."
@@ -149,8 +161,8 @@ Use browser's devtools to get it from cookies."
 (defun aoc-get-user (user-name)
   "Return user data table by USER-NAME."
   (declare (side-effect-free t))
-  (cl-second (ht-find (lambda (id user) (string= (downcase (ht-get user "name"))
-                                                 (downcase user-name)))
+  (cl-second (ht-find (lambda (_ user) (string= (downcase (ht-get user "name"))
+                                                (downcase user-name)))
                       (aoc-get-users aoc--users))))
 
 (defun aoc-user-get-id (user)
@@ -197,9 +209,8 @@ Use browser's devtools to get it from cookies."
 (defun aoc-user--tasks->stars (user)
   "Return stars string for USER tasks."
   (declare (side-effect-free t))
-  (let* ((sorted-tasks (aoc-user-list-tasks user))
-         (tasks (aoc-user-get-tasks user))
-         (max-task-num (aoc-task-current-max)))
+  (let ((tasks (aoc-user-get-tasks user))
+        (max-task-num (aoc-task-current-max)))
     (cl-loop for num in (number-sequence 1 max-task-num)
              collect (aoc--task-propertize-star
                       (ht-get tasks (number-to-string num) (ht))))))
@@ -215,7 +226,6 @@ Use browser's devtools to get it from cookies."
           (aoc-user--get-star-string user)
           (aoc-user-get-name user)))
 
-;; TODO: what year? Hardcoded? Choosed from table?
 (defun aoc-task-current-max ()
   "Return max available tasks for the year."
   (seq-let (day month year) (aoc--today)
@@ -264,8 +274,10 @@ Use browser's devtools to get it from cookies."
 (defun aoc-private-board-next-year ()
   "Switch current board to the next year."
   (interactive)
-  (let ((year (1+ aoc-private-leaderboard-year)))
-    (when (> year 2021) (error "No future"))
+  (let ((current-year (cl-third (aoc--today)))
+        (year (1+ aoc-private-leaderboard-year)))
+    (when (> year current-year)
+      (error "No information about the future event"))
     (setq aoc-private-leaderboard-year year)
     (rename-buffer (aoc-private-get-buffer-name year))
     (revert-buffer)))
@@ -274,7 +286,8 @@ Use browser's devtools to get it from cookies."
   "Switch current board to the previous year."
   (interactive)
   (let ((year (1- aoc-private-leaderboard-year)))
-    (when (< year 2015) (error "No time travel"))
+    (when (< year 2015)
+      (error "No events before 2015"))
     (setq aoc-private-leaderboard-year year)
     (rename-buffer (aoc-private-get-buffer-name year))
     (revert-buffer)))
