@@ -62,9 +62,8 @@
   :safe t
   :type '(repeat string))
 
-(defvar aoc--private-leaderboard-id nil
+(defvar-local aoc--private-leaderboard-id nil
   "Private leaderboard ID.")
-
 
 (defcustom aoc-user-session-id
   nil
@@ -260,16 +259,7 @@ Use browser's devtools to get it from cookies."
 (defun aoc-private--refresh ()
   "Refresh data and recompute table contents."
   (setq aoc--users (aoc-private-get-data)
-        tabulated-list-format aoc-private--list-format
         tabulated-list-entries (aoc-private--get-rows)))
-
-(defun aoc--ask-user-board-ids ()
-  "Ask for input and set session and leaderboard IDs."
-  (when aoc-ask-for-ids
-    (let ((session-id (read-string "Session ID: " aoc-user-session-id
-                                   nil nil aoc-user-session-id))
-          (leaderboard-id ))
-      (list session-id leaderboard-id))))
 
 (defun aoc-private-board-next-year ()
   "Switch current board to the next year."
@@ -293,9 +283,15 @@ Use browser's devtools to get it from cookies."
 (defun aoc-private-list-board ()
   "Show AoC private board."
   (interactive)
-  (pop-to-buffer (get-buffer-create (aoc-private-get-buffer-name
-                                     aoc-private-leaderboard-year)))
-  (aoc-private-board-mode))
+  (let ((buffer (get-buffer-create (aoc-private-get-buffer-name
+                                    (aoc--last-event-year)))))
+    (with-current-buffer buffer
+      (aoc-private-board-mode)
+      (setq aoc--private-leaderboard-id
+            (completing-read "Leaderboard ID: " aoc-private-leaderboard-ids))
+      (aoc-private--refresh)
+      (tabulated-list-print))
+    (pop-to-buffer buffer)))
 
 (defvar aoc-private-board-mode-map
   (let ((map (make-sparse-keymap)))
@@ -306,13 +302,9 @@ Use browser's devtools to get it from cookies."
 
 (define-derived-mode aoc-private-board-mode tabulated-list-mode
   "aoc:pb"
-  (make-variable-buffer-local 'aoc--private-leaderboard-id)
+  (setq tabulated-list-format aoc-private--list-format)
   (add-hook 'tabulated-list-revert-hook 'aoc-private--refresh)
-  (setq aoc--private-leaderboard-id
-        (completing-read "Leaderboard ID: " aoc-private-leaderboard-ids))
-  (aoc-private--refresh)
-  (tabulated-list-init-header)
-  (tabulated-list-print))
+  (tabulated-list-init-header))
 
 (provide 'aoc)
 
