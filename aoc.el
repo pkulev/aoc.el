@@ -1,13 +1,13 @@
 ;;; aoc.el --- Advent of Code leaderboard viewer -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2021 Pavel Kulyov
+;; Copyright (C) 2023 Pavel Kulyov
 
 ;; Author: Pavel Kulyov <kulyov.pavel@gmail.com>
 ;; Maintainer: Pavel Kulyov <kulyov.pavel@gmail.com>
-;; Version: 0.3.0
+;; Version: 0.4.0
 ;; Keywords: convenience
 ;; URL: https://www.github.com/pkulev/aoc.el.git
-;; Package-Requires: ((emacs "25.1") (json "1.4") (ht "2.4"))
+;; Package-Requires: ((emacs "25.1") (ht "2.4"))
 
 ;; This file is NOT part of GNU/Emacs.
 
@@ -130,11 +130,13 @@ initialization."
           aoc-private--leaderboard-id))
 
 (defun aoc-private--get-curl-command ()
+  "Construct default CURL command with cookies set."
   (format "curl -s --cookie 'session=%s' '%s'"
           aoc-user-session-id
           (aoc-private-get-url-current)))
 
 (defun aoc-private-get-data ()
+  "Get private leaderboard data."
   (let ((json-object-type 'hash-table)
         (raw (shell-command-to-string (aoc-private--get-curl-command))))
     (json-read-from-string raw)))
