@@ -1,52 +1,71 @@
-#+TITLE: aoc.el -- Advent of Code private leaderboard client
+* ToC                                                      :toc@2:noexport:
+- [[#aocel-----advent-of-code-private-leaderboard-client][*aoc.el* --- Advent of Code private leaderboard client]]
+- [[#installation][Installation]]
+  - [[#via-use-package][Via =use-package=]]
+- [[#keys-in-private-leaderboard-table][Keys in private leaderboard table]]
+- [[#customization][Customization]]
+- [[#license][License]]
 
-[[2021][file:https://github.com/pkulev/aoc.el/blob/main/images/screenshot1.png]]
-[[2020][file:https://github.com/pkulev/aoc.el/blob/main/images/screenshot2.png]]
+* *aoc.el* --- Advent of Code private leaderboard client
+
+[[file:images/screenshot1.png]]
+
+
+[[file:images/screenshot2.png]]
 
 * Installation
 
 ** Via =use-package=
-   #+begin_src elisp
-     (use-package aoc
-       :ensure nil
-       :quelpa
-       (aoc :repo "pkulev/aoc.el"
-            :fetcher github :upgrade t)
-       :custom
-       (aoc-private-leaderboard-ids '("<LEADERBOARD-ID>") "Get this from leaderboard URL.")
-       (aoc-user-session-id "<SESSION-ID>" "Get this from request cookies in browser."))
-   #+end_src
+#+begin_src elisp
+(use-package aoc
+  :ensure nil
+  :quelpa
+  (aoc :repo "pkulev/aoc.el"
+       :fetcher github :upgrade t)
+  :custom
+  (aoc-private-leaderboard-ids '("<LEADERBOARD-ID>") "Get this from leaderboard URL.")
+  (aoc-user-session-id "<SESSION-ID>" "Get this from request cookies in browser."))
+#+end_src
 
 * Keys in private leaderboard table
 
-  |-----+-----------------------------------|
-  | Key | Description                       |
-  |-----+-----------------------------------|
-  | g   | Refresh this table.               |
-  | f   | Show table for the next year.     |
-  | b   | Show table for the previous year. |
-  | q   | Bury table buffer.                |
-  |-----+-----------------------------------|
+|-----+-----------------------------------|
+| Key | Description                       |
+|-----+-----------------------------------|
+| g   | Refresh this table.               |
+| f   | Show table for the next year.     |
+| b   | Show table for the previous year. |
+| q   | Bury table buffer.                |
+|-----+-----------------------------------|
 
 * Customization
-  Customizable variables are subject for change so, *TODO TBA* here.
+Customizable variables are subject for change so, *TODO TBA* here.
 
-  - =aoc-user-session-id= :: /Session ID./
+- =aoc-user-session-id= :: /Session ID./
 
-    Session ID that appears in cookies after authentication on https://adventofcode.com.
+  Session ID that appears in cookies after authentication on https://adventofcode.com.
 
-  - =aoc-private-leaderboard-ids= :: /List of IDs for leaderboards./
+- =aoc-private-leaderboard-ids= :: /List of IDs for leaderboards./
 
-    List of Leaderboard IDs to choose from when activating the mode.
+  List of Leaderboard IDs to choose from when activating the mode.
 
-  - =aoc-private-leaderboard-url= :: /Private leaderboard URL template./
+- =aoc-private-leaderboard-url= :: /Private leaderboard URL template./
 
-    You probably should not touch it.
+  You probably should not touch it.
 
-  - =aoc-private-leaderboard-year= :: /Year for leaderboard./
+- =aoc-private-leaderboard-year= :: /Year for leaderboard./
 
-    Local buffer variable. Default value is current year.
+  Local buffer variable. Default value is current year.
 
-  - =aoc-private-request-interval= :: /Request interval (author asks to keep 15min interval)./
+- =aoc-private-request-interval= :: /Request interval (author asks to keep 15min interval)./
 
-    Will be used for updates by timer and tracking manual updates (TODO caching).
+  Will be used for updates by timer and tracking manual updates (TODO caching).
+
+* License
+This package is distributed under the GNU General Public License, version 3 or later. See the file
+LICENSE for details.
+
+
+# Local Variables:
+# eval: (add-hook 'after-save-hook #'org-gfm-export-to-markdown nil t)
+# End:
